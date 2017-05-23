@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxws:bindings
+        xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+>
+    <handler-chains
+            elementFormDefault="qualified">
+        <handler-chain>
+            <handler>
+                <handler-name>LoggingSOAPHandler</handler-name>
+                <handler-class>
+                    ro.tg.client.LoggingSOAPHandler
+                </handler-class>
+            </handler>
+        </handler-chain>
+    </handler-chains>
+</jaxws:bindings>

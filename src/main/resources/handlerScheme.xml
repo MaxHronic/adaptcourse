@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jws:handler-chains
+
+>
+    <jws:handler-chain>
+        <jws:handler-config>
+            <jws:handler-chain>
+                <jws:handler-chain-name>MyHandlerChain</jws:handler-chain-name>
+                <jws:handler>
+                    <jws:handler-name>MySoapHandler</jws:handler-name>
+                    <jws:handler-class>assistNotNeededForApp.jaxWS.embeddedContext.MySoapHandler</jws:handler-class>
+                </jws:handler>
+            </jws:handler-chain>
+        </jws:handler-config>
+    </jws:handler-chain>
+</jws:handler-chains>
