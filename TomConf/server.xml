@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -26,8 +26,6 @@
     -->
     <!--APR library loader. Documentation at /docs/apr.html -->
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
-    <!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
-    <Listener className="org.apache.catalina.core.JasperListener"/>
     <!-- Prevent memory leaks due to use of particular java/javax APIs-->
     <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
     <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
@@ -46,42 +44,13 @@
                   factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
                   pathname="conf/tomcat-users.xml"/>
 
-
-        <!--
-        MySql SQL запрос для проверки коннекта к базе данных выполняемый перед передачей коннета вызывающему
-            validationQuery="select 1 from dual"
-		By setting this, the objects will be validated before being borrowed from the pool.
-        If the object fails to validate, it will be dropped from the pool, and we will attempt to borrow another
-            testOnBorrow="true"
-            testWhileIdle="true"
-			
-		При установке этого парамера в true, заброшенные соединения будут освобождены, когда кол-во свободных соединений в пуле невелико.
-            removeAbandoned="true"
-		Этот параметр указывает в секундах время, через которое любое простаивающее соединение будет считаться заброшенным.
-            removeAbandonedTimeout = 54
-        Если значение выставлено в true, тогда при изъятии у приложения соединения, в логе Tomcat будет отображать stack trace кода, который использовал соединение
-            logAbandoned="true"
-
-        Максимальное количество соединений, которые будут содержаться в пуле
-            maxActive="100"
-        Максимальное количество простаивающих соединений, которые будут оставаться в пуле. При значении этого параметра равным нулю, ограничений не будет.
-            maxIdle="25"
-        The initial number of connections that are created when the pool is started
-            initialSize="25"
-        Если время ожидания соединения превысит значение параметра maxWait (в миллисекундах), пользователь получит Exception.
-        При значении maxWait равным -1, время ожидания не ограничено
-            maxWait="-1"/>
-		-->
-
-
-        <!--  =============================================================================================================================  -->
-        <Resource name="jdbc/mydb" auth="Container"
+        <Resource name="jdbc/mydb"
+                  auth="Container"
                   type="javax.sql.DataSource"
-                  driverClassName="oracle.jdbc.OracleDriver"
-
-                  url="jdbc:oracle:thin:@10.8.0.95:1521/oradb5"
-                  username="CHANGE_ME"
-                  password="CHANGE_ME_TOO"
+                  username="root"
+                  password="root"
+                  driverClassName="com.mysql.jdbc.Driver"
+                  url="jdbc:mysql://127.0.0.1:3306/mydb"
 
                   validationQuery="select 1 from dual"
                   testOnBorrow="true"
@@ -95,9 +64,28 @@
                   initialSize="10"
                   maxWait="-1"/>
 
-    </GlobalNamingResources>
-    <!--  =============================================================================================================================  -->
 
+        <!-- <Resource name="jdbc/mydb" auth="Container"
+                      type="javax.sql.DataSource"
+                      driverClassName="mysql.jdbc.OracleDriver"
+
+                      url="jdbc:oracle:thin:@10.8.0.95:1521/oradb5"
+                      username="root"
+                      password="root"
+
+                      validationQuery="select 1 from dual"
+                      testOnBorrow="true"
+                      testWhileIdle="true"
+                      removeAbandoned="true"
+                      removeAbandonedTimeout="60"
+                      logAbandoned="true"
+
+                      maxActive="100"
+                      maxIdle="10"
+                      initialSize="10"
+                      maxWait="-1"/>
+                   -->
+    </GlobalNamingResources>
 
     <!-- A "Service" is a collection of one or more "Connectors" that share
          a single "Container" Note:  A "Service" is not itself a "Container",
@@ -115,23 +103,14 @@
 
         <!-- A "Connector" represents an endpoint by which requests are received
              and responses are returned. Documentation at :
-             Java HTTP Connector: /docs/config/http.html (blocking & non-blocking)
+             Java HTTP Connector: /docs/config/http.html
              Java AJP  Connector: /docs/config/ajp.html
              APR (HTTP/AJP) Connector: /docs/apr.html
-             Define a non-SSL HTTP/1.1 Connector on port 8080
+             Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
         -->
         <Connector port="8080" protocol="HTTP/1.1"
-                   maxThreads="500"
-                   minSpareThreads="20"
-                   connectionTimeout="20000"/>
-
-        <Connector port="8443" protocol="HTTP/1.1"
-                   SSLEnabled="true" scheme="https" sslProtocol="TLS"
-                   secure="true" clientAuth="false"
-                   keystoreFile="/opt/tomcat7/elpaykeystore"
-                   keystorePass="ELpay1"
-                   maxThreads="500"
-        />
+                   connectionTimeout="20000"
+                   redirectPort="8443"/>
         <!-- A "Connector" using the shared thread pool-->
         <!--
         <Connector executor="tomcatThreadPool"
@@ -139,15 +118,40 @@
                    connectionTimeout="20000"
                    redirectPort="8443" />
         -->
-        <!-- Define a SSL HTTP/1.1 Connector on port 8443
-             This connector uses the BIO implementation that requires the JSSE
-             style configuration. When using the APR/native implementation, the
-             OpenSSL style configuration is required as described in the APR/native
-             documentation -->
+        <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443
+             This connector uses the NIO implementation. The default
+             SSLImplementation will depend on the presence of the APR/native
+             library and the useOpenSSL attribute of the
+             AprLifecycleListener.
+             Either JSSE or OpenSSL style configuration may be used regardless of
+             the SSLImplementation selected. JSSE style configuration is used below.
+        -->
         <!--
-        <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
-                   maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
-                   clientAuth="false" sslProtocol="TLS" />
+        <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+                   maxThreads="150" SSLEnabled="true">
+            <SSLHostConfig>
+                <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
+                             type="RSA" />
+            </SSLHostConfig>
+        </Connector>
+        -->
+        <!-- Define a SSL/TLS HTTP/1.1 Connector on port 8443 with HTTP/2
+             This connector uses the APR/native implementation which always uses
+             OpenSSL for TLS.
+             Either JSSE or OpenSSL style configuration may be used. OpenSSL style
+             configuration is used below.
+        -->
+        <!--
+        <Connector port="8443" protocol="org.apache.coyote.http11.Http11AprProtocol"
+                   maxThreads="150" SSLEnabled="true" >
+            <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
+            <SSLHostConfig>
+                <Certificate certificateKeyFile="conf/localhost-rsa-key.pem"
+                             certificateFile="conf/localhost-rsa-cert.pem"
+                             certificateChainFile="conf/localhost-rsa-chain.pem"
+                             type="RSA" />
+            </SSLHostConfig>
+        </Connector>
         -->
 
         <!-- Define an AJP 1.3 Connector on port 8009 -->
@@ -183,26 +187,20 @@
                        resourceName="UserDatabase"/>
             </Realm>
 
-            <Host name="1c" appBase="1c" unpackWARs="true" autoDeploy="true">
-                <Alias>1c.course.com.ua</Alias>
-                <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-                       prefix="1c_access_log" suffix=".txt"
-                       pattern="%h %l %u %t %r %s %b"/>
-                <Context path="" docBase="Elpay1C" debug="0" reloadable="true"/>
-            </Host>
-
-            <Host name="market" appBase="market" unpackWARs="true" autoDeploy="true">
-                <Alias>ext2.course.com.ua</Alias>
-                <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-                       prefix="market_access_log" suffix=".txt"
-                       pattern="%h %l %u %t %r %s %b"/>
-                <Context path="" docBase="ElpayMarket" debug="0" reloadable="true"/>
-            </Host>
-
             <Host name="localhost" appBase="webapps"
                   unpackWARs="true" autoDeploy="true">
+
+                <!-- SingleSignOn valve, share authentication between web applications
+                     Documentation at: /docs/config/valve.html -->
+                <!--
+                <Valve className="org.apache.catalina.authenticator.SingleSignOn" />
+                -->
+
+                <!-- Access log processes all example.
+                     Documentation at: /docs/config/valve.html
+                     Note: The pattern used is equivalent to using pattern="common" -->
                 <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
-                       prefix="localhost_access_log." suffix=".txt"
+                       prefix="localhost_access_log" suffix=".txt"
                        pattern="%h %l %u %t &quot;%r&quot; %s %b"/>
 
             </Host>
