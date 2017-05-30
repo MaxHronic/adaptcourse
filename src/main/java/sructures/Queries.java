@@ -45,8 +45,9 @@ public class Queries {
         return req;
     }
 
-    public static String createCourse() {
-        String req = "";
+    public static String createCourse(String name, String about, long author, String speciality) {
+        String req = "INSERT INTO mydb.course (name, about, personId, course_mark, speciality) " +
+                "VALUES ('" + name + "', '" + about + "', '" + author + "', '0', '" + speciality + "');";
         LOG.info(req);
         return req;
     }
@@ -58,7 +59,7 @@ public class Queries {
         return req;
     }
 
-    public static String getCourseProgress(long courseId) {
+    public static String getCourseRate(long courseId) {
         return "select name, counter, topic_mark from mydb.topic where courseId='" + courseId + "'";
     }
 
@@ -69,8 +70,8 @@ public class Queries {
                 "order by p.courseId";
     }
 
-    public static String setCourseProgress() {
-        return "";
+    public static String setCourseRate(long courseId, int rate) {
+        return "UPDATE mydb.course SET course_mark='" + rate + "' WHERE courseId='" + courseId + "';";
     }
 
     public static String setMyProgress() {
@@ -100,16 +101,25 @@ public class Queries {
         return req;
     }
 
-    //TODO
-    public static String createTopic(long courseId, int in_courseId) {
-        String req = "select * from mydb.topic where courseId = '" + courseId + "' and in_courseId = '" + in_courseId + "'";
+    public static String createTopic(long courseId, String name, String about, int in_courseId) {
+        String req = "INSERT INTO mydb.topic (courseId, name, counter, topic_mark, about, in_courseId) " +
+                "VALUES ('" + courseId + "', '" + name + "', '0', '0', '" + about + "', '" + in_courseId + "');\n";
         LOG.info(req);
         return req;
     }
 
-    //TODO
-    public static String editTopic(long courseId, int in_courseId) {
-        String req = "select * from mydb.topic where courseId = '" + courseId + "' and in_courseId = '" + in_courseId + "'";
+    public static String editTopic(long topicId, String name, String about, int in_course) {
+        String req = "UPDATE mydb.topic SET " +
+                "name='" + name + "', about='" + about + "', in_courseId='" + in_course + "' " +
+                "WHERE topicId='" + topicId + "';";
+        LOG.info(req);
+        return req;
+    }
+
+    public static String changeTopicRate(long topicId, int new_rate) {
+        String req = "UPDATE mydb.topic SET " +
+                "counter=counter+1, topic_mark='" + new_rate + "' " +
+                "WHERE topicId='" + topicId + "';";
         LOG.info(req);
         return req;
     }
@@ -127,14 +137,12 @@ public class Queries {
     }
     //==========================================================================================
 
-    public static String getLection(long courseId, int in_courseId) {
-        return "select * from mydb.topic where courseId = '" + courseId +
-                "' and in_courseId = '" + in_courseId + "'";
+    public static String getLection(long lectionId) {
+        return "select * from mydb.lections where lectionId = '" + lectionId + "'";
     }
 
-    public static String getTopicLections(long courseId) {
-        return "select topicId, in_courseId, name, about" +
-                "from mydb.topic where courseId = '" + courseId + "'";
+    public static String getTopicLections(long topicId) {
+        return "select * from mydb.lections where topicId = '" + topicId + "'";
     }
 
     public static String getMyCourseTopicLections(long personId, long courseId) {
@@ -205,8 +213,8 @@ public class Queries {
                 + "' and in_topicId = '" + in_topicId + "'";
     }
 
-    public static String getTopicQuestions(long topicId) {
-        return "select * from mydb.question where topicId='" + topicId + "' ORDER BY RAND() LIMIT 30'";
+    public static String getTopicQuestions(long topicId, int number) {
+        return "select * from mydb.question where topicId='" + topicId + "' ORDER BY RAND() LIMIT " + number + "'";
     }
 
 

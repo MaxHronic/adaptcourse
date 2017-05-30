@@ -566,7 +566,7 @@ public class Adapt implements IAdapt {
             connect = Config.connectToDB();
             LOG.info("CONNECTION OPENED");
             LOG.info("GetCourseProgress: user = " + personId + "; ip = " + Ip);
-            stmt = connect.prepareCall(Queries.getCourseProgress(courseId));
+            stmt = connect.prepareCall(Queries.getCourseRate(courseId));
             stmt.setLong(1, personId);
             stmt.setLong(2, personId);
             ResultSet rs = stmt.executeQuery();
