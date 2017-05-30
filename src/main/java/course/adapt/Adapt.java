@@ -101,7 +101,7 @@ public class Adapt implements IAdapt {
         ThreadContext.put("UUID", String.valueOf(Id));
     }
 
-
+    //TODO completed
     public Authorization Authorize(String login, String password) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
@@ -134,6 +134,7 @@ public class Adapt implements IAdapt {
         return result;
     }
 
+    //TODO completed
     public long Register(String login, String password, boolean status, String name, String surname) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
@@ -171,6 +172,9 @@ public class Adapt implements IAdapt {
         return personId;
     }
 
+    //===========================================================================================
+
+    //TODO completed
     public CourseList FindCourses(long personId, String request) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
@@ -204,6 +208,17 @@ public class Adapt implements IAdapt {
         return list;
     }
 
+    //TODO make CreateCourse
+//    public long CreateCourse(long personId, long courseId) throws IOException {
+//        return 0;
+//    }
+
+    //TODO make EditCourse
+    public long EditCourse(long personId, long courseId) throws IOException {
+        return 0;
+    }
+
+    //TODO completed
     public Course GetCourse(long personId, long courseId) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
@@ -232,7 +247,8 @@ public class Adapt implements IAdapt {
         return course;
     }
 
-    public CourseList getMyCourses(long personId) throws IOException {
+    //TODO completed
+    public CourseList GetMyCourses(long personId) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
         LOG.info("START getMyCourses");
@@ -302,7 +318,9 @@ public class Adapt implements IAdapt {
         return ans;
     }
 
-    public TopicList getCourseTopics(long personId, long courseId, boolean search) throws IOException {
+    //===========================================================================================
+
+    public TopicList GetCourseTopics(long personId, long courseId, boolean search) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
         LOG.info("START getCourseTopics");
@@ -339,7 +357,8 @@ public class Adapt implements IAdapt {
         return list;
     }
 
-    public TopicPages getTopicPages(long personId, long topicId) throws IOException {
+    //TODO change to GetTopicLectures
+    public TopicPages GetTopicPages(long personId, long topicId) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
         LOG.info("START getTopicPages");
@@ -372,6 +391,30 @@ public class Adapt implements IAdapt {
         }
         return list;
     }
+
+
+    //TODO make and interface
+    public long CreateLecture(long personId, long courseId) throws IOException {
+        return 0;
+    }
+
+    //TODO make and interface
+    public long EditLecture(long personId, long courseId) throws IOException {
+        return 0;
+    }
+
+    //    TODO make and interface
+    public long GetLecture(long personId, long courseId) throws IOException {
+        return 0;
+    }
+
+    //    TODO make and interface
+    public long GetLecturePages(long personId, long courseId) throws IOException {
+        return 0;
+    }
+
+
+    //===========================================================================================
 
 
     public Teachers GetTeachRate() throws IOException {
@@ -413,7 +456,7 @@ public class Adapt implements IAdapt {
                             float q_w, boolean ct) throws IOException {
         long startTime = System.currentTimeMillis();
         counter();
-        LOG.info("START EditQuestion");
+        LOG.info("START AddQuestion");
         CallableStatement stmt = null;
         String Ip = getIp();
         Connection connect = null;
@@ -421,7 +464,7 @@ public class Adapt implements IAdapt {
             LOG.info("start connect");
             connect = Config.connectToDB();
             LOG.info("CONNECTION OPENED");
-            LOG.info("EditQuestion: user = " + personId + "; ip = " + Ip);
+            LOG.info("AddQuestion: user = " + personId + "; ip = " + Ip);
             stmt = connect.prepareCall(Queries.addQuestion(topicId, in_topicId, text,
                     ans1, w1, ans2, w2, ans3, w3, ans4, w4, q_w, ct));
             stmt.execute();
@@ -429,13 +472,13 @@ public class Adapt implements IAdapt {
         } catch (Exception exception) {
             int code = Config.CODES.c909.id;
             String message = exception.getMessage();
-            LOG.info("EditQuestion error: code = " + Integer.toString(code) + ": message = " + message);
+            LOG.info("AddQuestion error: code = " + Integer.toString(code) + ": message = " + message);
             LOG.info(MessageFormat.format("{0}", exception.getStackTrace()));
             rethrow(code, message);
         } finally {
             Config.closeCon(connect);
             LOG.info("CONNECTION CLOSED!");
-            LOG.info("EditQuestion: TOTAL TIME = " + (System.currentTimeMillis() - startTime) + " ms");
+            LOG.info("AddQuestion: TOTAL TIME = " + (System.currentTimeMillis() - startTime) + " ms");
             ThreadContext.clearAll();
         }
     }
@@ -585,10 +628,6 @@ public class Adapt implements IAdapt {
         }
     }
 
-    //TODO make EditCourse
-    public long EditCourse(long personId, long courseId) throws IOException {
-        return 0;
-    }
 
     //TODO make GetMark
     public float GetMark(long personId, long courseId, long topicId, ArrayList<Answer> result) throws IOException {

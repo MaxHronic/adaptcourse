@@ -1,9 +1,13 @@
 package sructures;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Created by Max on 04.03.2017.
  */
 public class Queries {
+    private static final Logger LOG = LogManager.getLogger(Queries.class);
     //==========================================================================================
     public static String authorize(String login, String pas) {
         return "select personId, status from mydb.user where user.login='" + login + "' and password='" + pas + "'";
@@ -15,7 +19,7 @@ public class Queries {
             stat = 1;
         }
         return "INSERT INTO mydb.user (login, password, name, surname, status, rate) VALUES ('"
-                + login + "', '" + pas + "', '" + name + "', '" + surname + "', '0')";
+                + login + "', '" + pas + "', '" + name + "', '" + surname + "', '" + status + "')";
     }
 
     //==========================================================================================
@@ -23,11 +27,13 @@ public class Queries {
         String req = "select c.courseId, c.speciality, c.name, c.about, u.name, u.surname, c.course_mark " +
                 "from mydb.course c, mydb.user u " +
                 "where c.personId=u.personId and c.name like '%" + request + "%' ";
+        LOG.info(req);
         return req;
     }
 
-    public static String getMyCourses(long personId) {
+    public static String findMyCourses(long personId) {
         String req = "select * from mydb.course where personId='" + personId + "' ";
+        LOG.info(req);
         return req;
     }
 
@@ -35,48 +41,21 @@ public class Queries {
         String req = "select c.courseId, c.speciality, c.name, c.about, u.name, " +
                 "u.surname, c.course_mark from mydb.course c, mydb.user u  where " +
                 "c.personId=u.personId and c.courseId='" + courseId + "' LIMIT 0, 2\n ";
+        LOG.info(req);
         return req;
     }
 
-
-    //==========================================================================================
-    public static String Subscribe(long personId, long courseId) {
-        return "INSERT INTO mydb.personalprogress " +
-                "(personId, courseId, topicId, mark, progress, complete_count, pageId)" +
-                "VALUES ('" + personId + "','" + courseId + "','1','0','0','0','0')";
-    }
-
-    public static String Subscribe(long personId, long courseId, long topicId) {
-        return "INSERT INTO mydb.personalprogress " +
-                "(personId, courseid, topicId, mark, progress, complete_count)" +
-                "VALUES ('" + personId + "','" + courseId + "','" + topicId + "','0','0','0')";
-    }
-
-    //==========================================================================================
-    public static String AddPage(long topicId, String text, String ext_text, int in_topicId) {
-        return "INSERT INTO mydb.pages (topicId, text, text_ext, in_topicId) " +
-                "VALUES ('" + topicId + "', '" + text + "', '" + ext_text + "', '" + in_topicId + "')";
-    }
-
-    public static String EditPage(long topicId, long pageId, String text, String ext_text, int in_topicId) {
-        return "UPDATE mydb.pages SET `text`='" + text + "', `text_ext`='" + ext_text +
-                "', `in_topicId`='" + in_topicId +
-                "' WHERE `pageId`='" + pageId + "' and`topicId`='" + topicId + "'";
-    }
-
-    public static String getTopicPages(long topicId) {
-        return "select * from mydb.pages where topicId = '" + topicId + "'";
-    }
-
-    //==========================================================================================
-
-    public static String setCourse() {
-        return "";
+    public static String createCourse() {
+        String req = "";
+        LOG.info(req);
+        return req;
     }
 
     public static String editCourse(long courseId, String name, String about, long author, String spec) {
-        return "UPDATE mydb.course SET name='" + name + "', about='" + about + "', personId='" + author +
+        String req = "UPDATE mydb.course SET name='" + name + "', about='" + about + "', personId='" + author +
                 "', speciality='" + spec + "' WHERE courseId='" + courseId + "'";
+        LOG.info(req);
+        return req;
     }
 
     public static String getCourseProgress(long courseId) {
@@ -99,10 +78,40 @@ public class Queries {
     }
 
     //==========================================================================================
+    public static String Subscribe(long personId, long courseId) {
+        String req = "INSERT INTO mydb.personalprogress " +
+                "(personId, courseId, topicId, mark, progress, complete_count, pageId)" +
+                "VALUES ('" + personId + "','" + courseId + "','1','0','0','0','0')";
+        LOG.info(req);
+        return req;
+    }
+
+    public static String Subscribe(long personId, long courseId, long topicId) {
+        return "INSERT INTO mydb.personalprogress " +
+                "(personId, courseid, topicId, mark, progress, complete_count)" +
+                "VALUES ('" + personId + "','" + courseId + "','" + topicId + "','0','0','0')";
+    }
+
+    //==========================================================================================
 
     public static String getTopic(long courseId, int in_courseId) {
-        return "select * from mydb.topic where courseId = '" + courseId +
-                "' and in_courseId = '" + in_courseId + "'";
+        String req = "select * from mydb.topic where courseId = '" + courseId + "' and in_courseId = '" + in_courseId + "'";
+        LOG.info(req);
+        return req;
+    }
+
+    //TODO
+    public static String createTopic(long courseId, int in_courseId) {
+        String req = "select * from mydb.topic where courseId = '" + courseId + "' and in_courseId = '" + in_courseId + "'";
+        LOG.info(req);
+        return req;
+    }
+
+    //TODO
+    public static String editTopic(long courseId, int in_courseId) {
+        String req = "select * from mydb.topic where courseId = '" + courseId + "' and in_courseId = '" + in_courseId + "'";
+        LOG.info(req);
+        return req;
     }
 
     public static String getCourseTopics(long courseId) {
@@ -118,6 +127,41 @@ public class Queries {
     }
     //==========================================================================================
 
+    public static String getLection(long courseId, int in_courseId) {
+        return "select * from mydb.topic where courseId = '" + courseId +
+                "' and in_courseId = '" + in_courseId + "'";
+    }
+
+    public static String getTopicLections(long courseId) {
+        return "select topicId, in_courseId, name, about" +
+                "from mydb.topic where courseId = '" + courseId + "'";
+    }
+
+    public static String getMyCourseTopicLections(long personId, long courseId) {
+        return "select  t.topicId, t.in_courseId, t.name, t.about, p.access " +
+                "from mydb.topic t, mydb.personalprogress p " +
+                "where t.in_courseId=p.topicId  and t.courseId=p.courseId " +
+                "and p.personId='" + personId + "' and p.courseId='" + courseId + "' order by in_courseId asc";
+    }
+    //==========================================================================================
+
+
+    public static String AddPage(long topicId, String text, String ext_text, int in_topicId) {
+        return "INSERT INTO mydb.pages (topicId, text, text_ext, in_topicId) " +
+                "VALUES ('" + topicId + "', '" + text + "', '" + ext_text + "', '" + in_topicId + "')";
+    }
+
+    public static String EditPage(long topicId, long pageId, String text, String ext_text, int in_topicId) {
+        return "UPDATE mydb.pages SET `text`='" + text + "', `text_ext`='" + ext_text +
+                "', `in_topicId`='" + in_topicId +
+                "' WHERE `pageId`='" + pageId + "' and`topicId`='" + topicId + "'";
+    }
+
+    public static String getTopicPages(long topicId) {
+        return "select * from mydb.pages where topicId = '" + topicId + "'";
+    }
+
+    //==========================================================================================
 
     public static String getTest(long courseId, long topicId, int in_topicId) {
         return "select * from mydb.question where courseId ='" + courseId

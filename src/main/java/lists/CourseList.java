@@ -77,7 +77,7 @@ public class CourseList {
         courses = new ArrayList<Course>();
         CallableStatement stmt = null;
         try {
-            stmt = connect.prepareCall(Queries.getMyCourses(personId));
+            stmt = connect.prepareCall(Queries.findMyCourses(personId));
             LOG.info("Query prepared to execute ");
             ResultSet rs = stmt.executeQuery();
             LOG.info("Query executed!");

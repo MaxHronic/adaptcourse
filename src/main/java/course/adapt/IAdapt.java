@@ -46,7 +46,7 @@ public interface IAdapt {
     /**
      * @param login    - логин
      * @param password - пароль
-     * @param status   - статус (учитель/студент)
+     * @param is_teacher   - статус (учитель/студент)
      * @return returns personId
      */
     @WebMethod(action = "Registrate", operationName = "Registrate")
@@ -58,8 +58,8 @@ public interface IAdapt {
                     String login,
             @WebParam(name = "password")
                     String password,
-            @WebParam(name = "status")
-                    boolean status,
+            @WebParam(name = "is_teacher")
+                    boolean is_teacher,
             @WebParam(name = "name")
                     String name,
             @WebParam(name = "surname")
@@ -122,7 +122,7 @@ public interface IAdapt {
     @WebResult(name = "getMyCoursesResult")
     @RequestWrapper(localName = "getMyCourses")
     @ResponseWrapper(localName = "getMyCoursesResponse")
-    CourseList getMyCourses(
+    CourseList GetMyCourses(
             @WebParam(name = "personId")
                     long personId) throws IOException;
 
@@ -280,7 +280,7 @@ public interface IAdapt {
     @WebResult(name = "getCourseTopicsResult")
     @RequestWrapper(localName = "getCourseTopics")
     @ResponseWrapper(localName = "getCourseTopicsResponse")
-    TopicList getCourseTopics(
+    TopicList GetCourseTopics(
             @WebParam(name = "personId")
                     long personId,
             @WebParam(name = "courseId")
@@ -293,7 +293,7 @@ public interface IAdapt {
     @WebResult(name = "getTopicPagesResult")
     @RequestWrapper(localName = "getTopicPages")
     @ResponseWrapper(localName = "getTopicPagesResponse")
-    TopicPages getTopicPages(
+    TopicPages GetTopicPages(
             @WebParam(name = "personId")
                     long personId,
             @WebParam(name = "topicId")
