@@ -165,8 +165,14 @@ public class Queries {
                 "' WHERE `pageId`='" + pageId + "' and`topicId`='" + topicId + "'";
     }
 
+
+    //    TODO change to lections pages
     public static String getTopicPages(long topicId) {
         return "select * from mydb.pages where topicId = '" + topicId + "'";
+    }
+
+    public static String getLectionPages(long lecId) {
+        return "select * from mydb.pages where lectionId = '" + lecId + "'";
     }
 
     //==========================================================================================
